@@ -27,6 +27,3 @@ Currently learning and experimenting with:
 * APIs
 * AI integrations
 * Embedded systems & IoT
-
-* ع
-ع
