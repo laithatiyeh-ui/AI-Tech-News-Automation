@@ -1,0 +1,143 @@
+{
+  "name": "AI Tech News Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://feeds.feedburner.com/TheHackersNews"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d8d21eae-4795-4394-9a23-42a6575de830",
+      "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Summarize this tech news in 3 short bullet points:\n\nTitle:\n{{$json[\"title\"]}}\n\nDescription:\n{{$json[\"contentSnippet\"]}}\n",
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        224,
+        0
+      ],
+      "id": "417281ae-6cda-4379-841e-1a87cda105ac",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        224
+      ],
+      "id": "3fc27b2c-41ea-4790-86e3-47939387948c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ofTCsGPXEucoxtBr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_CHAT_ID",
+        "text": "=📰 New Tech News  {{$node[\"RSS Feed Trigger\"].json[\"title\"]}}  AI Summary: {{ $json.text.replace(/\\*/g, '') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        0
+      ],
+      "id": "aca6b48d-f041-4a64-9a5c-b07ffcfda854",
+      "name": "Send a text message",
+      "webhookId": "026bf407-767f-4e58-873f-bfe83d1bc1b4",
+      "credentials": {
+        "telegramApi": {
+          "id": "KHHiU5KUfFfa1dRZ",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedPerExecution": 0
+  },
+  "versionId": "d21af94b-29f5-486f-9c13-839763721076",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "48840bc6dbcee5b4cdd10b5a569f9a7be76d41454dd584ba27914c7e8b05c6a7"
+  },
+  "id": "f9iJg9xhicqIWIfG",
+  "tags": [
+    {
+      "updatedAt": "2026-05-17T14:50:04.049Z",
+      "createdAt": "2026-05-17T14:50:04.049Z",
+      "id": "FIvs9kkbOAfKv0vy",
+      "name": "AI News Bot"
+    }
+  ]
+}
